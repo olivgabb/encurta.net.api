@@ -18,7 +18,7 @@ public class IncrementClickService {
 	public void Increment(String shortUrl)
 	{
 
-        Document result = template.findAndModify(
+        template.findAndModify(
                 Query.query(where("_id").is(shortUrl)),
                 new Update().inc("clicks", 1),
                 FindAndModifyOptions.options().returnNew(true).upsert(true),

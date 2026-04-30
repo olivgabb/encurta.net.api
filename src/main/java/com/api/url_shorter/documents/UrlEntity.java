@@ -11,6 +11,7 @@ public class UrlEntity {
 	private String originalUrl;
 	private Instant createdAt;
 	private Long clicks; 
+	private String user_id;
 	
 	public UrlEntity()
 	{
@@ -40,6 +41,14 @@ public class UrlEntity {
 	}
 	public void setClicks(Long clicks) {
 		this.clicks = clicks;
+	}
+
+	public String getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(String user_id) {
+		this.user_id = user_id;
 	}
 	
 	

@@ -59,10 +59,13 @@ public class AuthController {
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		var body = Map.of("username", auth.getName());
+		
 		if(auth == null || !auth.isAuthenticated())
 			return ResponseEntity.badRequest().build();
 		return new ResponseEntity<>(body, HttpStatus.OK);
 	}
+	
+	
 	
 	@PostMapping("/register")
 	public ResponseEntity<Map<String,String>> register(@RequestBody @Validated RegisterDTO dto)
@@ -70,17 +73,21 @@ public class AuthController {
 		if(this.userRepo.findByUsername(dto.username()) != null) 
 		{
 			System.out.println("User already exists");
-			return ResponseEntity.badRequest().build();
+			return new ResponseEntity<>(Map.of("erro", "usuario ja existe"), HttpStatus.BAD_REQUEST);
 		}
 		var userPassword = new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
-		var auth = this.authManager.authenticate(userPassword);
 		
-		var token = tokenService.generateToken((User)auth.getPrincipal());
+		
 		
 		String encryptedPassword = encoder.encode(dto.password());
 		
 		User user = new User(dto.username(), encryptedPassword, dto.role());
 		this.userRepo.save(user);
+		
+		var auth = this.authManager.authenticate(userPassword);
+		
+		var token = tokenService.generateToken((User)auth.getPrincipal());
+		
 		
 		var body = Map.of("token", token);
 		
