@@ -60,6 +60,6 @@ public class JWTService {
 	private Instant genExpireTime()
 	{
 		//return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
-		return LocalDateTime.now().plusSeconds(1000).toInstant(ZoneOffset.of("-03:00"));
+		return LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("-03:00"));
 	}
 }

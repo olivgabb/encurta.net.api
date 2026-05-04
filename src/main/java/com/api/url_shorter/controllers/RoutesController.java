@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.url_shorter.documents.UrlEntity;
 import com.api.url_shorter.documents.User;
+import com.api.url_shorter.repositories.GetUrlDTO;
 import com.api.url_shorter.repositories.UrlRepository;
 import com.api.url_shorter.services.Base62;
 import com.api.url_shorter.services.CounterService;
@@ -100,7 +101,7 @@ public class RoutesController {
 	
 	
 	@GetMapping("/api/get-urls")
-	public ResponseEntity<Map<String,List<String>>> getOwner()
+	public ResponseEntity<Map<String,List<GetUrlDTO>>> getOwner()
 	{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		var user = (User)auth.getPrincipal();
@@ -112,13 +113,16 @@ public class RoutesController {
 		
 		List<UrlEntity> urls = template.find(query, UrlEntity.class, "Url");
 		
-		List<String> url_id = new ArrayList<String>();
+		List<GetUrlDTO> result = new ArrayList<GetUrlDTO>();
 		
 		for(int i = 0; i < urls.toArray().length; i++)
 		{
-			url_id.add(urls.get(i).getShortUrl());
+			UrlEntity tempUrl = urls.get(i);
+			GetUrlDTO tempDTO = new GetUrlDTO(tempUrl.getShortUrl(),
+					tempUrl.getOriginalUrl(), tempUrl.getClicks());
+			result.add(tempDTO);
 		}
-		var body = Map.of("urls", url_id);
+		var body = Map.of("urls", result);
 		
 		
 		return new ResponseEntity<>(body, HttpStatus.OK);

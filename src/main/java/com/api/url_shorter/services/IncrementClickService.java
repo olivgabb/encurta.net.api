@@ -8,22 +8,33 @@ import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import com.api.url_shorter.repositories.ClickDTO;
+import com.api.url_shorter.repositories.GetUrlDTO;
 
 @Service
 public class IncrementClickService {
 	@Autowired
 	private MongoTemplate template;
+    @Autowired
+	private SimpMessagingTemplate messagingTemplate;
 	
 	public void Increment(String shortUrl)
 	{
 
-        template.findAndModify(
+        GetUrlDTO dto = template.findAndModify(
                 Query.query(where("_id").is(shortUrl)),
                 new Update().inc("clicks", 1),
                 FindAndModifyOptions.options().returnNew(true).upsert(true),
-                Document.class,
+                GetUrlDTO.class,
                 "Url"
         );
+        
+        messagingTemplate.convertAndSend(
+        		"/topic/clicks", dto);
+        
+        
 	}
 }

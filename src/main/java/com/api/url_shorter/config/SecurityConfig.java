@@ -35,8 +35,6 @@ public class SecurityConfig {
 	        .authorizeHttpRequests(auth -> auth
 	        		.requestMatchers(HttpMethod.POST, "/api/insert")
 	        		.authenticated()
-	        		.requestMatchers(HttpMethod.GET, "/api/insert")
-	        		.hasRole("ADMIN")
 	            .anyRequest().permitAll()
 	        ).addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
